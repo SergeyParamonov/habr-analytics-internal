@@ -4,10 +4,13 @@ from StringIO import StringIO
 
 def convert_measured_date(dates):
   time_type = "minutes"
-  date_min = min(dates)
-  
-  x = [(date - date_min).total_seconds()/60 for date in dates]
-  if max(x) > 239:
+  if dates:
+    date_min = min(dates)
+    x = [(date - date_min).total_seconds()/60 for date in dates]
+  else:
+    x = []
+
+  if x and max(x) > 239:
     x = [e/60 for e in x]
     time_type = "hours"
   return (x, time_type)
