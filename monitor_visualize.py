@@ -23,7 +23,11 @@ def visualize_shares_post(dates,vk,fb,tw):
   plt.plot(time, vk, "-o", label="vkontakte"); plt.plot(time, fb, "-o", label="facebook"); plt.plot(time, tw, "-o",label="twitter")
   plt.xlabel(time_type)
   plt.ylabel("shares")
-  max_share = max(max(vk), max(fb), max(tw))
+
+  max_vk = max(vk) if vk else 0
+  max_fb = max(fb) if fb else 0
+  max_tw = max(tw) if tw else 0
+  max_share = max(max_vk, max_fb, max_tw)
   ax.set_ylim(0,max_share+1)
   plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.10), ncol=3, fancybox=True, shadow=True)
   return plt.gcf()
