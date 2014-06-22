@@ -7,9 +7,10 @@ import sys
 from datetime import datetime, date, timedelta
 import time
 from dateutil.parser import parse
-from user_visualize import rus_to_eng
 import pytz
 import calendar
+
+rus_to_eng = {u"января":"Jan", u"февраля":"Feb", u"марта":"Mar", u"апреля":"Apr", u"мая":"May", u"июня":"June", u"июля":"July", u"августа":"Aug",u"сентября":"Sep", u"октября":"Oct", u"ноября":"Nov", u"декабря":"Dec"}
 
 def get_data_from_column(data, column_index):
   output = []
