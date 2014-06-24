@@ -27,9 +27,9 @@ conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 topusers_database = db.topusers
-
-monitor_database = db.monitor
-id_title_database = db.id_title
+testing_db = db.testing
+#monitor_database = db.monitor
+#id_title_database = db.id_title
 
 
 #for post_id in ids:
