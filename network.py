@@ -18,6 +18,7 @@ from dateutil.parser import parse
 from StringIO import StringIO
 from bson import Binary
 from base64 import b64encode 
+import pytz
 
 
 
@@ -231,11 +232,6 @@ def extract_post_all_info(post_id):
 
   return (int(post_id), title ,views, favorite, twitter_data, facebook_data, vkontakte_data)
 
-def fetch_data_from_mongo(name,topusers_database):
-  data = topusers_database.find({"user":name}).sort("post_id",1)
-  if data:
-    return data
-  return None
 
 def get_title(post_id):
   post_id   =  str(post_id)
