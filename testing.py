@@ -32,6 +32,7 @@ db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #id_title_database = db.id_title
 cached_users = db.cached_users
 
+print(cached_users.find_one({"user":"alizar", "datatype":"favorite"}))
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title
