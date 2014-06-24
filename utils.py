@@ -140,6 +140,6 @@ def make_fig_key(post_id, datatype):
   return key
 
 def convert_user_datatype_to_figure_types(datatype):
-  datatypes_conversion =  {"pageview":"vies", "favorites":"favorite", "score":"score"}
+  datatypes_conversion =  {"pageview":"views", "favorites":"favorite", "score":"score"}
   return datatypes_conversion[datatype]
 
