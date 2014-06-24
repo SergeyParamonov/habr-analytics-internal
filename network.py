@@ -18,6 +18,7 @@ from dateutil.parser import parse
 from StringIO import StringIO
 from bson import Binary
 from base64 import b64encode 
+import pytz
 
 
 
@@ -129,7 +130,6 @@ def update_topusers(topusers_database):
       img.seek(0)
       plt.close(fig)
       str_img = b64encode(img.read())
-      print(len(str_img))
       topusers_database.insert({"user": user, "datatype": descr, "figure_binary":str_img, "timestamp":timestamp, "type":"monitor"})
 
 def update_date_dictionary(dates_dict):
