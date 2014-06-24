@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 import urllib3
 from bs4 import BeautifulSoup
 import locale
@@ -11,9 +12,13 @@ sys.path.append("src/")
 from utils import convert_date
 # dependencies of monitor_call
 from utils import make_fig_key, clean_old, update_posts
-from monitor_visualize import create_monitor_figure 
+from monitor_visualize import create_monitor_figure
+from user_visualize import visualize_y
 from dateutil.parser import parse
-import pytz
+from StringIO import StringIO
+from bson import Binary
+from base64 import b64encode 
+
 
 
 def extract_data(html):
@@ -109,23 +114,23 @@ def get_top_users():
   users = [user.text.lower() for user in usersRow]  
   return users + tm_users
 
-def read_user_datafile(username):
-  datafile    = open("data/topusers/"+username, "r")
-  row_str_data = datafile.read()
-  try:
-    data = eval(row_str_data)
-  except:
-    data = None
-  return data
-
 def update_topusers(topusers_database):
   users = get_top_users()
   topusers_database.remove({})
+  timestamp = datetime.now()
   for user in users:
     data = get_topics_data(user)
-    for datum in data:
-      datum['user'] = user
-      topusers_database.insert(datum)
+    for data_selector, descr in [(get_views,"views"), (get_fav,"favorite"), (get_scores,"score")]:
+      y_values = data_selector(data)
+      dates = get_dates(data)
+      fig   = visualize_y(dates,y_values)
+      img   = StringIO()
+      fig.savefig(img)
+      img.seek(0)
+      plt.close(fig)
+      str_img = b64encode(img.read())
+      print(len(str_img))
+      topusers_database.insert({"user": user, "datatype": descr, "figure_binary":str_img, "timestamp":timestamp, "type":"monitor"})
 
 def update_date_dictionary(dates_dict):
   url = "http://habrahabr.ru/posts/collective/new/page"
