@@ -38,7 +38,7 @@ def extract_data(html):
   try:
     views = int(html.find(class_="pageviews").text)
   except:
-    print(html)
+#   print(html)
     print("ERROR PAGEVIEWS")
     views = None
   #просмотры
