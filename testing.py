@@ -3,7 +3,7 @@
 import os
 import sys
 sys.path.append("src/")
-from network import get_topics_data, get_fav, get_views, get_scores, get_dates, get_top_users, update_topusers, extract_post_all_info, fetch_data_from_mongo, init_dates_dict, get_title, fetch_data_from_mongo, get_date_by_id, clean_old_monitor_records
+from network import *
 from user_visualize import visualize_y
 import urlparse
 from monitor_visualize import create_monitor_figure
@@ -26,19 +26,15 @@ if not MONGO_URL:
 conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
-<<<<<<< HEAD
 #topusers_database = db.topusers
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title
-testing_database = db.testing
-update_topusers(testing_database)
-=======
-topusers_database = db.topusers
-testing_db = db.testing
+cached_users = db.cached_users
+
+
 #monitor_database = db.monitor
 #id_title_database = db.id_title
->>>>>>> a6d9c6634cf4147e2154d4901447f39d20d994e8
 
 
 #for post_id in ids:

@@ -138,3 +138,8 @@ def habr_analytics_log(message):
 def make_fig_key(post_id, datatype):
   key = str(post_id) + ":" + str(datatype)
   return key
+
+def convert_user_datatype_to_figure_types(datatype):
+  datatypes_conversion =  {"pageview":"vies", "favorites":"favorite", "score":"score"}
+  return datatypes_conversion[datatype]
+
