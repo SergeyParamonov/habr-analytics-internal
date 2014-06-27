@@ -57,12 +57,13 @@ def extract_data(html):
   return {"post_id":post_id, "score":score, "views":views, "favorite":favorite, "date":date}
 
 def get_topics_data(username):
+  MAX_PAGES = 250
   http = urllib3.PoolManager()
   url  = "http://habrahabr.ru/users/"+username+"/topics/page"
   divclass = "post"
   data     = []
   i  = 1
-  while True:
+  while i <= MAX_PAGES:
     try:
       # url + str(i) iterates over pages of topics created by the user
       page_url = url+str(i)
@@ -130,7 +131,6 @@ def update_topusers(topusers_database):
       img.seek(0)
       plt.close(fig)
       str_img = b64encode(img.read())
-      print(len(str_img))
       topusers_database.insert({"user": user, "datatype": descr, "figure_binary":str_img, "timestamp":timestamp, "type":"monitor"})
 
 def update_date_dictionary(dates_dict):
