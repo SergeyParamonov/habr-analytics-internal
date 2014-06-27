@@ -279,9 +279,7 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
       new.append({"_id":post_id, "views": datum[2], "timestamp": list(timestamp)})
       # keep track of the titles in the id_title_database to display it for user in the form monitorform
       id_title_database.insert({"_id":post_id, "title": datum[1], "date": date})
-  pulse_database.insert(new)
   dif = compute_dif(new,old)
-  print("DIFF: "+str(dif))
   if dif:
     pulse_stats.insert(dif)
   # actually update the monitor database with new data
