@@ -9,7 +9,7 @@ from flask import flash
 import json
 import sys
 sys.path.append("src/")
-from utils import convert_date
+from utils import convert_date, debug
 # dependencies of monitor_call
 from utils import make_fig_key, clean_old, update_posts, compute_dif
 from monitor_visualize import create_monitor_figure
@@ -279,6 +279,7 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
       new.append({"_id":post_id, "views": datum[2], "timestamp": list(timestamp)})
       # keep track of the titles in the id_title_database to display it for user in the form monitorform
       id_title_database.insert({"_id":post_id, "title": datum[1], "date": date})
+  pulse_database.insert(new)
   dif = compute_dif(new,old)
   if dif:
     pulse_stats.insert(dif)

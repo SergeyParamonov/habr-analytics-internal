@@ -166,3 +166,7 @@ def compute_dif(new, old):
         break
   return {"dif":dif, "date1":date1, "date2":date2}
  
+def debug(debug_string):
+  print(str(debug_string))
+  sys.stdout.flush() 
+
