@@ -256,7 +256,7 @@ def create_dict_id_title(dict_id_title,id_title_database):
 #REQUIRES LIBRARIES datetime (datetime constructor), pytz, 
 #DEPENDS ON SRC/ *monitor_visualize.py*: create_monitor_figure, *utils.py*: make_fig_key, clean_old, update_posts, *network.py* update_date_dictionary, create_dict_id_title, extract_post_all_info
 #MODIFIES dict_dates, dict_last_values, dict_id_title,  id_title_database, PoolManager (close connections), cache, monitor_database, pulse_database
-def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache, monitor_datatypes, pulse_database):
+def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache,monitor_datatypes, pulse_database1,pulse_database2):
   # remove the posts older than 2 days
   clean_old(dict_dates, monitor_database, id_title_database, monitor_datatypes, cache)
   # remove all old records from monitor database, this might happen due to errors or restarts of the server
@@ -269,10 +269,15 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
   # drop all last values
   dict_last_values = {}
   # iterate over all "fresh" posts and get the data
+  pulse_database1.remove({})
+  old = pulse_database2.find({})
+  pulse_database1.insert(list(old))
+  pulse_database2.remove({})
   for post_id,date in dict_dates.iteritems():
     datum = extract_post_all_info(post_id)
     if datum:
       dict_last_values[post_id] = datum 
+      pulse_database2.insert({"_id":post_id, "views": datum[2], "timestamp": list(timestamp)})
       # keep track of the titles in the id_title_database to display it for user in the form monitorform
       id_title_database.insert({"_id":post_id, "title": datum[1], "date": date})
   # actually update the monitor database with new data
