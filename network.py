@@ -256,7 +256,7 @@ def create_dict_id_title(dict_id_title,id_title_database):
 #REQUIRES LIBRARIES datetime (datetime constructor), pytz, 
 #DEPENDS ON SRC/ *monitor_visualize.py*: create_monitor_figure, *utils.py*: make_fig_key, clean_old, update_posts, *network.py* update_date_dictionary, create_dict_id_title, extract_post_all_info
 #MODIFIES dict_dates, dict_last_values, dict_id_title,  id_title_database, PoolManager (close connections), cache, monitor_database, pulse_database
-def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache,monitor_datatypes, pulse_database):
+def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache,monitor_datatypes, pulse_database, pulse_stats):
   # remove the posts older than 2 days
   clean_old(dict_dates, monitor_database, id_title_database, monitor_datatypes, cache)
   # remove all old records from monitor database, this might happen due to errors or restarts of the server
@@ -280,7 +280,9 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
       # keep track of the titles in the id_title_database to display it for user in the form monitorform
       id_title_database.insert({"_id":post_id, "title": datum[1], "date": date})
   pulse_database.insert(new)
-  print(compute_dif(new,old))
+  dif = compute_dif(new,old)
+  if dif:
+    pulse_stats.insert(dif)
   # actually update the monitor database with new data
   update_posts(dict_last_values,timestamp,monitor_database)
   # update available titles and their id-s in the app *dict_id_title* by getting data from *id_title_database*

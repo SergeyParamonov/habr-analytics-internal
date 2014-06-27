@@ -31,9 +31,6 @@ db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #monitor_database = db.monitor
 #id_title_database = db.id_title
 cached_users = db.cached_users
-pulse_db1 = db.pulse_database1
-pulse_db2 = db.pulse_database2
-print(compute_dif(pulse_db1,pulse_db2))
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title

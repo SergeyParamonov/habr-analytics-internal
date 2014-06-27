@@ -153,6 +153,9 @@ def compute_dif(new, old):
     date2 = old[0]['timestamp']
   else:
     date2 = None
+  # if new data is not "fresh", then get out of here
+  if not date1 > date2:
+    return None
   for post1 in new:
     id1 = post1['_id']
     for post2 in old:
@@ -161,5 +164,5 @@ def compute_dif(new, old):
         dif += post1['views'] - post2["views"]
       if id1 < id2:
         break
-  return (dif, date1, date2)
+  return {"dif":dif, "date1":date1, "date2":date2}
  
