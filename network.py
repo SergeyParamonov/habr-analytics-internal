@@ -271,6 +271,8 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
   # iterate over all "fresh" posts and get the data
   pulse_database1.remove({})
   old = pulse_database2.find({})
+  print("OLD COUNT")
+  print(old.count)
   if old.count():
     pulse_database1.insert(list(old))
   pulse_database2.remove({})

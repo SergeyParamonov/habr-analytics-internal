@@ -7,7 +7,7 @@ from network import *
 from user_visualize import visualize_y
 import urlparse
 from monitor_visualize import create_monitor_figure
-from utils import convert_date 
+from utils import *
 from dateutil.parser import parse
 
 # dict_dates = {}
@@ -31,8 +31,9 @@ db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #monitor_database = db.monitor
 #id_title_database = db.id_title
 cached_users = db.cached_users
-
-print(cached_users.find_one({"user":"alizar", "datatype":"favorite"}))
+pulse_db1 = db.pulse_database1
+pulse_db2 = db.pulse_database2
+print(compute_dif(pulse_db1,pulse_db2))
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title
