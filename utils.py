@@ -154,8 +154,6 @@ def compute_dif(new, old):
   else:
     date2 = None
   # if new data is not "fresh", then get out of here
-  print(date1)
-  print(date2)
   if not date1 > date2:
     return None
   for post1 in new:

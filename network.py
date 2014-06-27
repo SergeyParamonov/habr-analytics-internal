@@ -269,7 +269,7 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
   # drop all last values
   dict_last_values = {}
   # iterate over all "fresh" posts and get the data
-  old = pulse_database.find({}).sort("_id",1)
+  old = list(pulse_database.find({}).sort("_id",1))
   pulse_database.remove({})
   new = []
   for post_id,date in dict_dates.iteritems():
