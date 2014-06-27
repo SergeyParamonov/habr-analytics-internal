@@ -11,7 +11,7 @@ import sys
 sys.path.append("src/")
 from utils import convert_date
 # dependencies of monitor_call
-from utils import make_fig_key, clean_old, update_posts
+from utils import make_fig_key, clean_old, update_posts, compute_dif
 from monitor_visualize import create_monitor_figure
 from user_visualize import visualize_y
 from dateutil.parser import parse
