@@ -143,3 +143,21 @@ def convert_user_datatype_to_figure_types(datatype):
   datatypes_conversion =  {"pageview":"views", "favorites":"favorite", "score":"score"}
   return datatypes_conversion[datatype]
 
+def create_fig_pulse(pulse_database1, pulse_database2):
+  dif = 0
+  posts_1 = list(pulse_database1.find({}).sort("_id",1))
+  if posts_1:
+    date1 = posts_1[0]['timestamp']
+  posts_2 = list(pulse_database2.find({}).sort("_id",1))
+  if posts_2:
+    date2 = posts_2[0]['timestamp']
+  for post1 in post_1:
+    id1 = post1['_id']
+    for post2 in post_2:
+      id2 = post2['_id']
+      if id1 == id2:
+        dif += post2['views'] - post1["views"]
+      if id1 < id2:
+        break
+  return (dif, date1, date2)
+ 
