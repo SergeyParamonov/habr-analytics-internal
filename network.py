@@ -57,12 +57,13 @@ def extract_data(html):
   return {"post_id":post_id, "score":score, "views":views, "favorite":favorite, "date":date}
 
 def get_topics_data(username):
+  MAX_PAGES = 250
   http = urllib3.PoolManager()
   url  = "http://habrahabr.ru/users/"+username+"/topics/page"
   divclass = "post"
   data     = []
   i  = 1
-  while True:
+  while i <= MAX_PAGES:
     try:
       # url + str(i) iterates over pages of topics created by the user
       page_url = url+str(i)
