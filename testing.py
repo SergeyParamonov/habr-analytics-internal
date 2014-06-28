@@ -6,7 +6,7 @@ sys.path.append("src/")
 from network import *
 from user_visualize import visualize_y
 import urlparse
-from monitor_visualize import create_monitor_figure
+from monitor_visualize import *
 from utils import *
 from dateutil.parser import parse
 
@@ -27,10 +27,11 @@ conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
-
+pulse_stats = db.pulse_stats
 #monitor_database = db.monitor
 #id_title_database = db.id_title
-cached_users = db.cached_users
+#cached_users = db.cached_users
+
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title

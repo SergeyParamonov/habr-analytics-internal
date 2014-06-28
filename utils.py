@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*
 from __future__ import print_function
 from flask import Markup
+import matplotlib.pyplot as plt
 import os.path
 import os
 import sys
 from datetime import datetime, date, timedelta
+import pymongo
 import time
 from dateutil.parser import parse
 import pytz
 import calendar
+from base64 import b64encode 
+from monitor_visualize import create_pulse_figure
+from StringIO import StringIO
+
 
 rus_to_eng = {u"января":"Jan", u"февраля":"Feb", u"марта":"Mar", u"апреля":"Apr", u"мая":"May", u"июня":"June", u"июля":"July", u"августа":"Aug",u"сентября":"Sep", u"октября":"Oct", u"ноября":"Nov", u"декабря":"Dec"}
 
@@ -170,3 +176,27 @@ def debug(debug_string):
   print(str(debug_string))
   sys.stdout.flush() 
 
+def get_records_by_time(pulse_stats):
+  data = list(pulse_stats.find({}).sort("date1",-1))
+  data.reverse()
+  data = data[:205]
+  return data
+
+
+def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
+  dif = compute_dif(new,old)
+  if dif:
+    pulse_stats.insert(dif)
+  data = get_records_by_time(pulse_stats)
+  pulse_stats.remove({})
+  pulse_stats.insert(data)
+  data = get_records_by_time(pulse_stats)
+  fig  = create_pulse_figure(data)
+  img  = StringIO()
+  fig.savefig(img)
+  img.seek(0)
+  plt.close(fig)
+  str_img = b64encode(img.read())
+  timestamp = datetime.now()
+  pulse_figure_db.remove({})
+  pulse_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
