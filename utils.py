@@ -160,7 +160,7 @@ def compute_dif(new, old):
   else:
     date2 = None
   # if new data is not "fresh", then get out of here
-  if not (date1 > date2) or not date1 or not date2:
+  if not date1 or not date2 or not (date1 > date2):
     return None
   for post1 in new:
     id1 = post1['_id']
