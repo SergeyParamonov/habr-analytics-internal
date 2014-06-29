@@ -28,6 +28,13 @@ conn = pymongo.Connection(MONGO_URL)
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
 pulse_stats = db.pulse_stats
+data = pulse_stats.find({})
+def convert_to_date(d):
+  return datetime(d[0],d[1],d[2],d[3],d[4])
+pulse_stats.remove({})
+for datum in data:
+  pulse_stats.insert({'dif':datum['dif'], 'date1':convert_to_date(datum['date1']), 'date2':convert_to_date(datum['date2'])})
+
 #monitor_database = db.monitor
 #id_title_database = db.id_title
 #cached_users = db.cached_users

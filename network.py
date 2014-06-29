@@ -276,7 +276,7 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
     datum = extract_post_all_info(post_id)
     if datum:
       dict_last_values[post_id] = datum 
-      new.append({"_id":post_id, "views": datum[2], "timestamp": list(timestamp)})
+      new.append({"_id":post_id, "views": datum[2], "timestamp": datetime(timestamp[0],timestamp[1],timestamp[2],timestamp[3],timestamp[4])})
       # keep track of the titles in the id_title_database to display it for user in the form monitorform
       id_title_database.insert({"_id":post_id, "title": datum[1], "date": date})
   pulse_database.insert(new)
