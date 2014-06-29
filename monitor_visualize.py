@@ -72,7 +72,7 @@ def create_pulse_figure(data):
   for datum in data:
     y = datum['dif']
     d = datum['date1']
-    x = datetime(d[0],d[1],d[2],d[3],d[4])+timedelta(hours=4) # +4 to adjust to moscow time
+    x = d+timedelta(hours=4) # +4 to adjust to moscow time
     xy.append((x,y))
   sorted_tuples = sorted(xy)
   x = [e[0] for e in sorted_tuples]
