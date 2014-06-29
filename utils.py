@@ -168,8 +168,6 @@ def compute_dif(new, old):
       id2 = post2['_id']
       if id1 == id2:
         dif += post1['views'] - post2["views"]
-      if id1 < id2:
-        break
   return {"dif":dif, "date1":date1, "date2":date2}
  
 def debug(debug_string):
