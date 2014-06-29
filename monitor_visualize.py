@@ -77,4 +77,5 @@ def create_pulse_figure(data):
   plt.xlabel("Moscow Time Zone +4 UTC")
   plt.ylabel("Difference in views")
   plt.plot(x, y, "-o")
+  fig.set_size_inches(18.5,10.5)
   return fig
