@@ -195,7 +195,7 @@ def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   str_img = b64encode(img.read())
   timestamp = datetime.now()
   pulse_figure_db.remove({})
-  pulse_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
+  pulzase_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
 
 def get_pulse_figure(pulse_figure_db):
   encoded_figure = pulse_figure_db.find_one({})['figure_binary']
