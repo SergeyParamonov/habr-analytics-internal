@@ -71,7 +71,7 @@ def create_pulse_figure(data):
   x,y = [],[]
   for datum in data:
     y.append(datum['dif'])
-    d = datum['date2']
+    d = datum['date1']
     x.append(datetime(d[0],d[1],d[2],d[3],d[4])+timedelta(hours=2)) # +2 to adjust to moscow time
   fig = plt.figure()
   plt.xlabel("Moscow Time Zone +4 UTC")

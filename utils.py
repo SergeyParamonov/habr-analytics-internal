@@ -188,7 +188,6 @@ def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   data = get_records_by_time(pulse_stats)
   pulse_stats.remove({})
   pulse_stats.insert(data)
-  data = get_records_by_time(pulse_stats)
   fig  = create_pulse_figure(data)
   img  = StringIO()
   fig.savefig(img)
