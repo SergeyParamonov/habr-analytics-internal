@@ -11,7 +11,7 @@ import time
 from dateutil.parser import parse
 import pytz
 import calendar
-from base64 import b64encode 
+from base64 import b64encode, b64decode
 from monitor_visualize import create_pulse_figure
 from StringIO import StringIO
 
@@ -180,7 +180,6 @@ def get_records_by_time(pulse_stats):
   data = data[:205]
   return data
 
-
 def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   dif = compute_dif(new,old)
   if dif:
@@ -197,3 +196,10 @@ def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   timestamp = datetime.now()
   pulse_figure_db.remove({})
   pulse_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
+
+def get_pulse_figure(pulse_figure_db):
+  encoded_figure = pulse_figure_db.find_one({})['figure_binary']
+  decoded_figure = b64decode(encoded_figure)
+  img            = StringIO(decoded_figure)
+  img.seek(0)
+  return img
