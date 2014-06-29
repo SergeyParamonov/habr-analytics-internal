@@ -176,8 +176,8 @@ def debug(debug_string):
 
 def get_records_by_time(pulse_stats):
   data = list(pulse_stats.find({}).sort("date1",-1))
-  data.reverse()
   data = data[:205]
+  data.reverse()
   return data
 
 def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
