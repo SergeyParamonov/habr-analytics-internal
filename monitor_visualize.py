@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from datetime import datetime
+from datetime import datetime,timedelta
 from StringIO import StringIO
 
 def convert_measured_date(dates):
@@ -67,3 +67,19 @@ def create_monitor_figure(post_id, datatype, monitor_database):
   plt.close(fig)
   return img
 
+def create_pulse_figure(data):
+  xy = []
+  for datum in data:
+    y = datum['dif']
+    d = datum['date1']
+    x = d+timedelta(hours=4) # +4 to adjust to moscow time
+    xy.append((x,y))
+  sorted_tuples = sorted(xy)
+  x = [e[0] for e in sorted_tuples]
+  y = [e[1] for e in sorted_tuples]
+  fig = plt.figure()
+  plt.xlabel("Moscow Time Zone +4 UTC")
+  plt.ylabel("Difference in views")
+  plt.plot(x, y, "-o")
+  fig.set_size_inches(18.5,10.5)
+  return fig

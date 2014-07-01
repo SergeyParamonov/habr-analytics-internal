@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*
 from __future__ import print_function
 from flask import Markup
+import matplotlib.pyplot as plt
 import os.path
 import os
 import sys
 from datetime import datetime, date, timedelta
+import pymongo
 import time
 from dateutil.parser import parse
 import pytz
 import calendar
+from base64 import b64encode, b64decode
+from monitor_visualize import create_pulse_figure
+from StringIO import StringIO
+
 
 rus_to_eng = {u"января":"Jan", u"февраля":"Feb", u"марта":"Mar", u"апреля":"Apr", u"мая":"May", u"июня":"June", u"июля":"July", u"августа":"Aug",u"сентября":"Sep", u"октября":"Oct", u"ноября":"Nov", u"декабря":"Dec"}
 
@@ -143,3 +149,57 @@ def convert_user_datatype_to_figure_types(datatype):
   datatypes_conversion =  {"pageview":"views", "favorites":"favorite", "score":"score"}
   return datatypes_conversion[datatype]
 
+def compute_dif(new, old):
+  dif = 0
+  if new:
+    date1 = new[0]['timestamp']
+  else:
+    date1 = None
+  if old:
+    date2 = old[0]['timestamp']
+  else:
+    date2 = None
+  # if new data is not "fresh", then get out of here
+  if not date1 or not date2 or not (date1 > date2):
+    return None
+  for post1 in new:
+    id1 = post1['_id']
+    for post2 in old:
+      id2 = post2['_id']
+      if id1 == id2:
+        dif += post1['views'] - post2["views"]
+  return {"dif":dif, "date1":date1, "date2":date2}
+ 
+def debug(debug_string):
+  print(str(debug_string))
+  sys.stdout.flush() 
+
+def get_records_by_time(pulse_stats):
+  data = list(pulse_stats.find({}).sort("date1",-1))
+  data = data[:205]
+  data.reverse()
+  return data
+
+def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
+  dif = compute_dif(new,old)
+  if dif:
+    pulse_stats.insert(dif)
+  data = get_records_by_time(pulse_stats)
+  pulse_stats.remove({})
+  pulse_stats.insert(data)
+  fig  = create_pulse_figure(data)
+  img  = StringIO()
+  fig.savefig(img)
+  img.seek(0)
+  plt.close(fig)
+  str_img = b64encode(img.read())
+  timestamp = datetime.now()
+  pulse_figure_db.remove({})
+  pulse_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
+
+def get_pulse_figure(pulse_figure_db):
+  encoded_figure = pulse_figure_db.find_one({})['figure_binary']
+  decoded_figure = b64decode(encoded_figure)
+  img            = StringIO(decoded_figure)
+  img.seek(0)
+  return img

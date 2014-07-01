@@ -6,8 +6,8 @@ sys.path.append("src/")
 from network import *
 from user_visualize import visualize_y
 import urlparse
-from monitor_visualize import create_monitor_figure
-from utils import convert_date 
+from monitor_visualize import *
+from utils import *
 from dateutil.parser import parse
 
 # dict_dates = {}
@@ -27,12 +27,18 @@ conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
+pulse_stats = db.pulse_stats
+data = pulse_stats.find({})
+def convert_to_date(d):
+  return datetime(d[0],d[1],d[2],d[3],d[4])
+pulse_stats.remove({})
+for datum in data:
+  pulse_stats.insert({'dif':datum['dif'], 'date1':convert_to_date(datum['date1']), 'date2':convert_to_date(datum['date2'])})
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title
-cached_users = db.cached_users
+#cached_users = db.cached_users
 
-print(cached_users.find_one({"user":"alizar", "datatype":"favorite"}))
 
 #monitor_database = db.monitor
 #id_title_database = db.id_title
