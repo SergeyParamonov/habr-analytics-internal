@@ -104,7 +104,7 @@ def get_top_users():
   url = 'http://habrahabr.ru/users/'
   http = urllib3.PoolManager()
   user_class = "username"
-  tm_users = ['boomburum', 'alizar', 'ilya42', 'deniskin']
+  tm_users = ['boomburum', 'alizar', 'ilya42', 'deniskin', 'marks']
   try:
     response = http.request('GET', url, headers={"cache-control": "no-cache"})
   except: 
