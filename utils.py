@@ -171,7 +171,7 @@ def compute_dif(new, old):
   return {"dif":dif, "date1":date1, "date2":date2}
  
 def debug(debug_string):
-  print(str(debug_string))
+  print(debug_string)
   sys.stdout.flush() 
 
 def get_records_by_time(pulse_stats):

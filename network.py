@@ -53,7 +53,10 @@ def extract_data(html):
     favorite = None
     print(html)
     print("ERROR FAV")
-  date = convert_date(html.find(class_="published").text)
+  rowDate = html.find(class_="published").text
+# debug(rowDate)
+  date = convert_date(rowDate)
+  debug(date)
   return {"post_id":post_id, "score":score, "views":views, "favorite":favorite, "date":date}
 
 def get_topics_data(username):

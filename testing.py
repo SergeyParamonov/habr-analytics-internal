@@ -28,6 +28,8 @@ conn = pymongo.Connection(MONGO_URL)
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
 pulse_stats = db.pulse_stats
+cached_users = db.cached_users
+cached_users.remove({"user":"varagian"})
 #data = pulse_stats.find({})
 #def convert_to_date(d):
 #  return datetime(d[0],d[1],d[2],d[3],d[4])
