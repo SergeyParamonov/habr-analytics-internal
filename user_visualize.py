@@ -36,11 +36,11 @@ def visualize_y(x,y):
   fig, ax = plt.subplots()
   plt.plot(y, '-o')
   x_range = range(len(y))
-  plt.xticks(x_range,x,rotation=0,fontsize=9)
+  plt.xticks(x_range,x,rotation=70,fontsize=9)
   plt.axis('on') 
    # recompute the ax.dataLim
   ax.relim()
   # update ax.viewLim using the new dataLim
   ax.autoscale_view()
-  fig.autofmt_xdate()
+  plt.subplots_adjust(bottom=0.15)
   return fig
