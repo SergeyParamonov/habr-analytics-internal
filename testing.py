@@ -29,15 +29,17 @@ conn = pymongo.Connection(MONGO_URL)
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
 pulse_stats = db.pulse_stats
-cached_users = db.cached_users
-#update_topusers(cached_users)
-data = get_topics_data("lozga")
-for data_selector, descr in [(get_views,"views"), (get_fav,"favorite"), (get_scores,"score")]:
-  y_values = data_selector(data)
-  dates = get_dates(data)
-  fig   = visualize_y(dates,y_values)
-
+create_pulse_figure(pulse_stats.find({}))
 plt.show()
+#cached_users = db.cached_users
+#update_topusers(cached_users)
+#data = get_topics_data("lozga")
+#for data_selector, descr in [(get_views,"views"), (get_fav,"favorite"), (get_scores,"score")]:
+#  y_values = data_selector(data)
+#  dates = get_dates(data)
+#  fig   = visualize_y(dates,y_values)
+
+#plt.show()
 
 #data = pulse_stats.find({})
 #def convert_to_date(d):
@@ -46,7 +48,7 @@ plt.show()
 #for datum in data:
 #  pulse_stats.insert({'dif':datum['dif'], 'date1':convert_to_date(datum['date1']), 'date2':convert_to_date(datum['date2'])})
 
-print(convert_date(u"1 июля в 11:17"))
+#print(convert_date(u"1 июля в 11:17"))
 #monitor_database = db.monitor
 #id_title_database = db.id_title
 #cached_users = db.cached_users

@@ -67,10 +67,13 @@ def create_monitor_figure(post_id, datatype, monitor_database):
   plt.close(fig)
   return img
 
+  
 def create_pulse_figure(data):
   xy = []
   for datum in data:
-    y = datum['dif']
+    date_dif = datum['date1'] - datum['date2']
+    num_of_minutes = date_dif.seconds/60
+    y = datum['dif'] / num_of_minutes
     d = datum['date1']
     x = d+timedelta(hours=4) # +4 to adjust to moscow time
     xy.append((x,y))

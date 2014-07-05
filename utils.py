@@ -176,7 +176,8 @@ def debug(debug_string):
 
 def get_records_by_time(pulse_stats):
   data = list(pulse_stats.find({}).sort("date1",-1))
-  data = data[:205]
+  #205 записей -- один день, 205*7 -- неделя
+  data = data[:1435]
   data.reverse()
   return data
 
