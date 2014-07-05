@@ -29,7 +29,15 @@ db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
 pulse_stats = db.pulse_stats
 cached_users = db.cached_users
-cached_users.remove({"user":"infobox"})
+#update_topusers(cached_users)
+data = get_topics_data("lozga")
+for data_selector, descr in [(get_views,"views"), (get_fav,"favorite"), (get_scores,"score")]:
+  y_values = data_selector(data)
+  dates = get_dates(data)
+  fig   = visualize_y(dates,y_values)
+
+plt.show()
+
 #data = pulse_stats.find({})
 #def convert_to_date(d):
 #  return datetime(d[0],d[1],d[2],d[3],d[4])

@@ -8,7 +8,7 @@ from utils import debug
 
 def compress_large_array(dates):
   if len(dates) <= 60:
-    return dates
+    return map(omit_current_year, dates)
   else:
     years = []
     for date in dates:
@@ -32,7 +32,6 @@ def omit_current_year(date):
 
 def visualize_y(x,y):
   x = compress_large_array(x)
-  x = map(omit_current_year, x)
   fig, ax = plt.subplots()
   plt.plot(y, '-o')
   x_range = range(len(y))
