@@ -9,7 +9,8 @@ import urlparse
 from monitor_visualize import *
 from utils import *
 from dateutil.parser import parse
-
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US.utf8')
 # dict_dates = {}
 # dict_last_values = {}
 # id_list = get_id_new_posts(dict_dates)

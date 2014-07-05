@@ -4,6 +4,7 @@ from matplotlib.dates import DateFormatter
 from dateutil.parser import parse
 from datetime import datetime
 from utils import debug
+import locale
 
 
 def compress_large_array(dates):
@@ -31,6 +32,7 @@ def omit_current_year(date):
   return date.strftime('%d %b') 
 
 def visualize_y(x,y):
+  locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   x = compress_large_array(x)
   fig, ax = plt.subplots()
   plt.plot(y, '-o')
