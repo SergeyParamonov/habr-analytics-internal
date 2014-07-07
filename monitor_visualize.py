@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import os
 import matplotlib.pyplot as plt
 import plotly.plotly as py
 from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
@@ -96,9 +97,11 @@ def create_pulse_figure(data):
   return fig
 
 def plotly_create_stream(data):
+  api_key      = os.environ.get("PLOTLY_KEY_API")
+  stream_token = os.environ.get("PULSE_STREAM_TOKEN")
   x, y = process_data_for_pulse(data)
-  py.sign_in('SergeyParamonov', 'j84b1e0ydc')
-  data = Data([Scatter(x=x,y=y,stream=dict(token='1l855lpd26'))])
+  py.sign_in('SergeyParamonov', api_key)
+  data = Data([Scatter(x=x,y=y,stream=dict(token=stream_token))])
   layout = Layout(title="Пульс Хабра — изменение просмотров статей в Новом (в минуту)",
       xaxis= XAxis(title=u"Московское время"), # x-axis title
       yaxis= YAxis(title=u"Просмотры"), # y-axis title
@@ -108,3 +111,5 @@ def plotly_create_stream(data):
   plotly_fig = Figure(data=data, layout=layout)
   unique_url = py.plot(plotly_fig, filename="pulse")
   return unique_url
+
+

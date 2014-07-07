@@ -12,8 +12,10 @@ from dateutil.parser import parse
 import pytz
 import calendar
 from base64 import b64encode, b64decode
-from monitor_visualize import create_pulse_figure
+from monitor_visualize import create_pulse_figure, process_data_for_pulse
 from StringIO import StringIO
+import plotly.plotly as py
+from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
 
 
 rus_to_eng = {u"января":"Jan", u"февраля":"Feb", u"марта":"Mar", u"апреля":"Apr", u"мая":"May", u"июня":"June", u"июля":"July", u"августа":"Aug",u"сентября":"Sep", u"октября":"Oct", u"ноября":"Nov", u"декабря":"Dec"}
@@ -197,6 +199,18 @@ def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   timestamp = datetime.now()
   pulse_figure_db.remove({})
   pulse_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
+  #plotly figure generation
+  xs,ys = process_data_for_pulse([dif])
+  x = xs[0]
+  y = ys[0]
+  py.sign_in('SergeyParamonov', api_key)
+  stream_token = os.environ.get("PULSE_STREAM_TOKEN")
+  s = py.Stream(stream_token)
+  s.open()
+  write(dict(x = x, y = y))
+  s.close()
+
+from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
 
 def get_pulse_figure(pulse_figure_db):
   encoded_figure = pulse_figure_db.find_one({})['figure_binary']

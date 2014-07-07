@@ -314,5 +314,3 @@ def get_date_by_id(post_id):
 def close_connections():
   http = urllib3.PoolManager()
   http.clear()
-
-
