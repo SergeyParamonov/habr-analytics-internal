@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
+import sys
 import matplotlib.pyplot as plt
+import plotly.plotly as py
+from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
 from datetime import datetime,timedelta
 from StringIO import StringIO
 
@@ -67,8 +71,8 @@ def create_monitor_figure(post_id, datatype, monitor_database):
   plt.close(fig)
   return img
 
-  
-def create_pulse_figure(data):
+
+def process_data_for_pulse(data):
   xy = []
   for datum in data:
     date_dif = datum['date1'] - datum['date2']
@@ -80,9 +84,27 @@ def create_pulse_figure(data):
   sorted_tuples = sorted(xy)
   x = [e[0] for e in sorted_tuples]
   y = [e[1] for e in sorted_tuples]
+  return (x,y)
+
+def create_pulse_figure(data):
+  x, y = process_data_for_pulse(data)
   fig = plt.figure()
   plt.xlabel("Moscow Time Zone +4 UTC")
   plt.ylabel("Difference in views")
   plt.plot(x, y, "-o")
   fig.set_size_inches(18.5,10.5)
   return fig
+
+def plotly_create_stream(data):
+  x, y = process_data_for_pulse(data)
+  py.sign_in('SergeyParamonov', 'j84b1e0ydc')
+  data = Data([Scatter(x=x,y=y,stream=dict(token='1l855lpd26'))])
+  layout = Layout(title="Пульс Хабра — изменение просмотров статей в Новом (в минуту)",
+      xaxis= XAxis(title=u"Московское время"), # x-axis title
+      yaxis= YAxis(title=u"Просмотры"), # y-axis title
+      showlegend=False,    # remove legend (info in hover)
+      hovermode='closest', # N.B hover -> closest data pt
+      )
+  plotly_fig = Figure(data=data, layout=layout)
+  unique_url = py.plot(plotly_fig, filename="pulse")
+  return unique_url

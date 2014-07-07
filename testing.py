@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import sys
 sys.path.append("src/")
@@ -7,7 +6,7 @@ from network import *
 from user_visualize import visualize_y
 import urlparse
 from monitor_visualize import *
-from utils import *
+from utils import debug
 from dateutil.parser import parse
 import locale
 locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -28,9 +27,8 @@ conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
 #topusers_database = db.topusers
-pulse_stats = db.pulse_stats
-create_pulse_figure(pulse_stats.find({}))
-plt.show()
+#create_pulse_figure(pulse_stats.find({}))
+#plt.show()
 #cached_users = db.cached_users
 #update_topusers(cached_users)
 #data = get_topics_data("lozga")
