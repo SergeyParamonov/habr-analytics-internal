@@ -207,10 +207,9 @@ def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   stream_token = os.environ.get("PULSE_STREAM_TOKEN")
   s = py.Stream(stream_token)
   s.open()
-  write(dict(x = x, y = y))
+  s.write(dict(x = x, y = y))
   s.close()
 
-from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
 
 def get_pulse_figure(pulse_figure_db):
   encoded_figure = pulse_figure_db.find_one({})['figure_binary']
