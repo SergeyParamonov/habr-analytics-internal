@@ -12,7 +12,7 @@ from dateutil.parser import parse
 import pytz
 import calendar
 from base64 import b64encode, b64decode
-from monitor_visualize import create_pulse_figure, process_data_for_pulse
+from monitor_visualize import create_pulse_figure, process_data_for_pulse, plotly_create_stream
 from StringIO import StringIO
 import plotly.plotly as py
 from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
