@@ -200,16 +200,7 @@ def clean_update_and_create_figure(new, old, pulse_stats, pulse_figure_db):
   pulse_figure_db.remove({})
   pulse_figure_db.insert({"figure_binary":str_img, "timestamp":timestamp})
   #plotly figure generation
-  xs,ys = process_data_for_pulse([dif])
-  x = xs[0]
-  y = ys[0]
-  py.sign_in('SergeyParamonov', api_key)
-  stream_token = os.environ.get("PULSE_STREAM_TOKEN")
-  s = py.Stream(stream_token)
-  s.open()
-  s.write(dict(x = x, y = y))
-  s.close()
-
+  plotly_create_stream(data)
 
 def get_pulse_figure(pulse_figure_db):
   encoded_figure = pulse_figure_db.find_one({})['figure_binary']
