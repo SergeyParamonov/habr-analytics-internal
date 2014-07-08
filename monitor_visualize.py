@@ -6,6 +6,7 @@ import plotly.plotly as py
 from plotly.graph_objs import Figure,Data,Layout,XAxis,YAxis,Scatter
 from datetime import datetime,timedelta
 from StringIO import StringIO
+import locale
 
 def convert_measured_date(dates):
   time_type = "minutes"
@@ -21,6 +22,7 @@ def convert_measured_date(dates):
   return (x, time_type)
 
 def visualize_shares_post(dates,vk,fb,tw):
+  locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   time, time_type = convert_measured_date(dates)
   fig = plt.figure()
   ax  = plt.gca()
@@ -38,6 +40,7 @@ def visualize_shares_post(dates,vk,fb,tw):
   return plt.gcf()
 
 def visualize_post(dates,y, field):
+  locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   time, time_type = convert_measured_date(dates)
   fig = plt.figure()
   plt.plot(time, y, "-o")
@@ -46,6 +49,7 @@ def visualize_post(dates,y, field):
   return plt.gcf()
 
 def create_monitor_figure(post_id, datatype, monitor_database):
+  locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   post_id = int(post_id)
   data = monitor_database.find({"post_id":post_id}).sort("overall_seconds",1)
   x = []
@@ -88,6 +92,7 @@ def process_data_for_pulse(data):
   return (x,y)
 
 def create_pulse_figure(data):
+  locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   x, y = process_data_for_pulse(data)
   fig = plt.figure()
   plt.xlabel("Moscow Time Zone +4 UTC")
