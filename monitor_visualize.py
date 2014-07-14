@@ -48,6 +48,29 @@ def visualize_post(dates,y, field):
   plt.ylabel(field)
   return plt.gcf()
 
+#x -- dates
+#y -- views or favorites
+#field -- info on y
+def visualize_post_plotly(x, y, field, post_id):
+  api_key      = os.environ.get("PLOTLY_KEY_API")
+  stream_token = os.environ.get("PULSE_STREAM_TOKEN")
+  py.sign_in('SergeyParamonov', api_key)
+  data = Data([Scatter(x=x,y=y,stream=dict(token=stream_token))])
+  if field == "favorite":
+    ytitle = u"Избранное"
+  else:
+    ytitle = u"Просмотры"
+  layout = Layout(title="Монитор для статьи с id: "+str(post_id),
+      xaxis= XAxis(title=u"Московское время"), # x-axis title
+      yaxis= YAxis(title=ytitle), # y-axis title
+      showlegend=False,    # remove legend (info in hover)
+      hovermode='closest', # N.B hover -> closest data pt
+      )
+  plotly_fig = Figure(data=data, layout=layout)
+  plotly_filename = str(post_id) + "_" + field
+  unique_url = py.plot(plotly_fig, filename=plotly_filename)
+  return unique_url
+
 def create_monitor_figure(post_id, datatype, monitor_database):
   locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   post_id = int(post_id)
@@ -69,12 +92,8 @@ def create_monitor_figure(post_id, datatype, monitor_database):
     for datum in data:
       x.append(datetime(datum["year"], datum["month"], datum["day"], datum["hour"], datum["minute"]))
       y.append(datum[field])
-    fig = visualize_post(x,y,field)
-  img  = StringIO()
-  fig.savefig(img)
-  img.seek(0)
-  plt.close(fig)
-  return img
+    fig_url = visualize_post_plotly(x,y,field, post_id)
+  return fig_url
 
 
 def process_data_for_pulse(data):

@@ -259,7 +259,7 @@ def create_dict_id_title(dict_id_title,id_title_database):
 #REQUIRES LIBRARIES datetime (datetime constructor), pytz, 
 #DEPENDS ON SRC/ *monitor_visualize.py*: create_monitor_figure, *utils.py*: make_fig_key, clean_old, update_posts, *network.py* update_date_dictionary, create_dict_id_title, extract_post_all_info
 #MODIFIES dict_dates, dict_last_values, dict_id_title,  id_title_database, PoolManager (close connections), cache, monitor_database, pulse_database
-def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache,monitor_datatypes, pulse_database, pulse_stats, pulse_figure_db):
+def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache,monitor_datatypes, pulse_database, pulse_stats, pulse_figure_db, monitor_plotly_url):
   # remove the posts older than 5 days
   clean_old(dict_dates, monitor_database, id_title_database, monitor_datatypes, cache)
   # remove all old records from monitor database, this might happen due to errors or restarts of the server
@@ -294,8 +294,8 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
   # cache all the images with new data
   for post_id in dict_dates.keys():
     for datatype in monitor_datatypes.keys():
-      img = create_monitor_figure(post_id, datatype, monitor_database)
-      cache.set(make_fig_key(post_id,datatype),img)
+      figure_url = create_monitor_figure(post_id, datatype, monitor_database)
+      monitor_plotly_url.insert({"post_id":post_id, "datatype":datatype, "url":figure_url})
 
 def get_date_by_id(post_id):
   url = "http://habrahabr.ru/post/" + str(post_id)
