@@ -21,7 +21,7 @@ def convert_measured_date(dates):
     time_type = "hours"
   return (x, time_type)
 
-def visualize_shares_post(dates,vk,fb,tw, post_id):
+def visualize_shares_post(dates,vk,fb,tw, post_id, title):
   locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   api_key      = os.environ.get("PLOTLY_KEY_API")
   py.sign_in('SergeyParamonov', api_key)
@@ -44,7 +44,7 @@ def visualize_shares_post(dates,vk,fb,tw, post_id):
                      name=u"Twitter"
   )
   data = Data([vk_trace,fb_trace,tw_trace])
-  layout = Layout(title="Репосты статьи, id: "+str(post_id),
+  layout = Layout(title=u"Репосты: " + title,
       xaxis= XAxis(title=u"Московское время"), # x-axis title
       yaxis= YAxis(title=u"Репосты"), # y-axis title
       hovermode='closest', # N.B hover -> closest data pt
@@ -66,7 +66,7 @@ def visualize_post(dates,y, field):
 #x -- dates
 #y -- views or favorites
 #field -- info on y
-def visualize_post_plotly(x, y, field, post_id):
+def visualize_post_plotly(x, y, field, post_id, title):
   api_key      = os.environ.get("PLOTLY_KEY_API")
   py.sign_in('SergeyParamonov', api_key)
   data = Data([Scatter(x=x,y=y)])
@@ -74,7 +74,7 @@ def visualize_post_plotly(x, y, field, post_id):
     ytitle = u"Избранное"
   else:
     ytitle = u"Просмотры"
-  layout = Layout(title="Монитор для статьи с id: "+str(post_id),
+  layout = Layout(title=ytitle+": "+title,
       xaxis= XAxis(title=u"Московское время"), # x-axis title
       yaxis= YAxis(title=ytitle), # y-axis title
       showlegend=False,    # remove legend (info in hover)
@@ -85,7 +85,7 @@ def visualize_post_plotly(x, y, field, post_id):
   unique_url = py.plot(plotly_fig, filename=plotly_filename)
   return unique_url
 
-def create_monitor_figure(post_id, datatype, monitor_database):
+def create_monitor_figure(post_id, datatype, monitor_database, title):
   locale.setlocale(locale.LC_ALL, 'en_US.utf8')
   post_id = int(post_id)
   data = monitor_database.find({"post_id":post_id}).sort("overall_seconds",1)
@@ -96,7 +96,7 @@ def create_monitor_figure(post_id, datatype, monitor_database):
     for datum in data:
       x.append(datetime(datum["year"], datum["month"], datum["day"], datum["hour"], datum["minute"]))
       vk.append(datum[vk_f]); fb.append(datum[fb_f]); tw.append(datum[tw_f])
-    fig_url = visualize_shares_post(x,vk,fb,tw,post_id)
+    fig_url = visualize_shares_post(x,vk,fb,tw,post_id,title)
   else:
     y = []
     if datatype == "pageview":
@@ -106,9 +106,8 @@ def create_monitor_figure(post_id, datatype, monitor_database):
     for datum in data:
       x.append(datetime(datum["year"], datum["month"], datum["day"], datum["hour"], datum["minute"]))
       y.append(datum[field])
-    fig_url = visualize_post_plotly(x,y,field, post_id)
+    fig_url = visualize_post_plotly(x,y,field, post_id, title)
   return fig_url
-
 
 def process_data_for_pulse(data):
   xy = []
