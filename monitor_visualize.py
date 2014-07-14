@@ -47,7 +47,6 @@ def visualize_shares_post(dates,vk,fb,tw, post_id):
   layout = Layout(title="Репосты статьи, id: "+str(post_id),
       xaxis= XAxis(title=u"Московское время"), # x-axis title
       yaxis= YAxis(title=u"Репосты"), # y-axis title
-      showlegend=False,    # remove legend (info in hover)
       hovermode='closest', # N.B hover -> closest data pt
   )
   plotly_fig = Figure(data=data, layout=layout)
