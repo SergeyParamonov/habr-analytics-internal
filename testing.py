@@ -26,8 +26,10 @@ if not MONGO_URL:
 conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
-data = get_records_by_time(db.pulse_stats)
-plotly_create_stream(data)
+monitor_plotly_url = db.monitor_plotly_url
+monitor_plotly_url.remove({})
+#data = get_records_by_time(db.pulse_stats)
+#plotly_create_stream(data)
 #topusers_database = db.topusers
 #create_pulse_figure(pulse_stats.find({}))
 #plt.show()
