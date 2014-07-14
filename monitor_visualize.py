@@ -31,13 +31,13 @@ def visualize_shares_post(dates,vk,fb,tw, post_id):
                      mode='lines+markers',
                      name=u"Вконтакте"
   )
-  fb_trace = scatter(
+  fb_trace = Scatter(
                      x=dates,
                      y=fb,
                      mode='lines+markers',
                      name=u"Facebook"
   )
-  tw_trace = scatter(
+  tw_trace = Scatter(
                      x=dates,
                      y=tw,
                      mode='lines+markers',
