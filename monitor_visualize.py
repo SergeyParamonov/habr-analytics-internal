@@ -21,23 +21,39 @@ def convert_measured_date(dates):
     time_type = "hours"
   return (x, time_type)
 
-def visualize_shares_post(dates,vk,fb,tw):
+def visualize_shares_post(dates,vk,fb,tw, post_id):
   locale.setlocale(locale.LC_ALL, 'en_US.utf8')
-  time, time_type = convert_measured_date(dates)
-  fig = plt.figure()
-  ax  = plt.gca()
-# plt.xticks(minutes,dates,rotation=80,  fontsize=9)
-  plt.plot(time, vk, "-o", label="vkontakte"); plt.plot(time, fb, "-o", label="facebook"); plt.plot(time, tw, "-o",label="twitter")
-  plt.xlabel(time_type)
-  plt.ylabel("shares")
-
-  max_vk = max(vk) if vk else 0
-  max_fb = max(fb) if fb else 0
-  max_tw = max(tw) if tw else 0
-  max_share = max(max_vk, max_fb, max_tw)
-  ax.set_ylim(0,max_share+1)
-  plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.10), ncol=3, fancybox=True, shadow=True)
-  return plt.gcf()
+  api_key      = os.environ.get("PLOTLY_KEY_API")
+  py.sign_in('SergeyParamonov', api_key)
+  vk_trace = Scatter(
+                     x=dates,
+                     y=vk,
+                     mode='lines+markers',
+                     name=u"Вконтакте"
+  )
+  fb_trace = scatter(
+                     x=dates,
+                     y=fb,
+                     mode='lines+markers',
+                     name=u"Facebook"
+  )
+  tw_trace = scatter(
+                     x=dates,
+                     y=tw,
+                     mode='lines+markers',
+                     name=u"Twitter"
+  )
+  data = Data([vk_trace,fb_trace,tw_trace])
+  layout = Layout(title="Репосты статьи, id: "+str(post_id),
+      xaxis= XAxis(title=u"Московское время"), # x-axis title
+      yaxis= YAxis(title=u"Репосты"), # y-axis title
+      showlegend=False,    # remove legend (info in hover)
+      hovermode='closest', # N.B hover -> closest data pt
+  )
+  plotly_fig = Figure(data=data, layout=layout)
+  plotly_filename = "monitor_post_id_" + str(post_id) + "_" + "shares"
+  unique_url = py.plot(plotly_fig, filename=plotly_filename)
+  return unique_url
 
 def visualize_post(dates,y, field):
   locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -53,9 +69,8 @@ def visualize_post(dates,y, field):
 #field -- info on y
 def visualize_post_plotly(x, y, field, post_id):
   api_key      = os.environ.get("PLOTLY_KEY_API")
-  stream_token = os.environ.get("PULSE_STREAM_TOKEN")
   py.sign_in('SergeyParamonov', api_key)
-  data = Data([Scatter(x=x,y=y,stream=dict(token=stream_token))])
+  data = Data([Scatter(x=x,y=y)])
   if field == "favorite":
     ytitle = u"Избранное"
   else:
@@ -67,7 +82,7 @@ def visualize_post_plotly(x, y, field, post_id):
       hovermode='closest', # N.B hover -> closest data pt
       )
   plotly_fig = Figure(data=data, layout=layout)
-  plotly_filename = str(post_id) + "_" + field
+  plotly_filename = "monitor_post_id_" + str(post_id) + "_" + field
   unique_url = py.plot(plotly_fig, filename=plotly_filename)
   return unique_url
 
@@ -82,7 +97,7 @@ def create_monitor_figure(post_id, datatype, monitor_database):
     for datum in data:
       x.append(datetime(datum["year"], datum["month"], datum["day"], datum["hour"], datum["minute"]))
       vk.append(datum[vk_f]); fb.append(datum[fb_f]); tw.append(datum[tw_f])
-    fig = visualize_shares_post(x,vk,fb,tw)
+    fig_url = visualize_shares_post(x,vk,fb,tw,post_id)
   else:
     y = []
     if datatype == "pageview":
