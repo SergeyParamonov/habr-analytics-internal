@@ -298,11 +298,7 @@ def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database,
   for post_id in dict_dates.keys():
     for datatype in monitor_datatypes.keys():
       figure_url = create_monitor_figure(post_id, datatype, monitor_database)
-<<<<<<< HEAD
       monitor_plotly_url.update({"_id":make_fig_key(post_id,datatype)}, {"url":figure_url}, {"upsert":True} )
-=======
-      monitor_plotly_url.update({"post_id":post_id, "datatype":datatype}, {"post_id":post_id, "datatype":datatype,"url":figure_url}, {"upsert":True} )
->>>>>>> fbe2534d7a3e1609304d517933b99962fc291e58
 
 def get_date_by_id(post_id):
   url = "http://habrahabr.ru/post/" + str(post_id)
