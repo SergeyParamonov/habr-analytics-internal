@@ -96,6 +96,7 @@ def create_monitor_figure(post_id, datatype, monitor_database, title):
     for datum in data:
       x.append(datetime(datum["year"], datum["month"], datum["day"], datum["hour"], datum["minute"]))
       vk.append(datum[vk_f]); fb.append(datum[fb_f]); tw.append(datum[tw_f])
+    x = [e + timedelta(hours=4) for e in x]
     fig_url = visualize_shares_post(x,vk,fb,tw,post_id,title)
   else:
     y = []
@@ -106,6 +107,7 @@ def create_monitor_figure(post_id, datatype, monitor_database, title):
     for datum in data:
       x.append(datetime(datum["year"], datum["month"], datum["day"], datum["hour"], datum["minute"]))
       y.append(datum[field])
+    x = [e + timedelta(hours=4) for e in x]
     fig_url = visualize_post_plotly(x,y,field, post_id, title)
   return fig_url
 
