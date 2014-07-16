@@ -124,7 +124,7 @@ def delete_post(post_id, key, collection):
 
 def clean_old(dict_dates, monitor, id_title, monitor_datatypes, cache):
   now = datetime.now()
-  two_days = timedelta(days = 7)
+  two_days = timedelta(days = 2)
 # one_day = timedelta(seconds = 0)
   for k,v in dict_dates.items():
     if now - v > two_days:
