@@ -146,7 +146,7 @@ def get_all_posts(preferences):
     all_posts |= pref 
   return all_posts
 
-def compute_weigths(preferences):
+def compute_weigths():
   preferences = read_preferences()
   all_posts   = get_all_posts(preferences)
   count_file   = open("./data/recommender/post_counts.csv", "w")
@@ -179,7 +179,7 @@ def read_titles():
     titles[int(row[0])] = row[1]
   return titles
 
-def download_new_titles(preferences):
+def download_new_titles():
   preferences = read_preferences()
   all_posts   = get_all_posts(preferences)
   file_out= open("data/recommender/titles.csv","a")
@@ -191,7 +191,7 @@ def download_new_titles(preferences):
       file_out.flush()
   file_out.close()
 
-def get_titles(ids, titles):
+def get_titles(ids):
  answer = []
  for post_id in ids:
    if post_id in titles:
@@ -200,11 +200,15 @@ def get_titles(ids, titles):
      answer.append((post_id, get_title(post_id)))
  return answer
 
-def generate_link_by_id(post_id):
-  return "http://habrahabr.ru/post/" + str(post_id)
-
 #uncomment to make give_recommendations work!
-def give_recommendations(username, preferences, weights, titles):
+print("reading preferences")
+preferences = read_preferences()
+print("reading weights")
+weights     = read_weigths()
+print("reading titles")
+titles      = read_titles()
+
+def give_recommendations(username):
   preference = preferences[username] 
   rank = {}
   for user_other, preference_other in preferences.iteritems():
@@ -217,9 +221,14 @@ def give_recommendations(username, preferences, weights, titles):
           rank.setdefault(post, 0)
           rank[post] += similarity
   #normalize and convert to 
-  post_list = [(sim/weights[post], post) for post, sim in rank.items()]
+  post_list = [(similarity/weights[post], post) for post, similarity in rank.items()]
   post_list.sort(reverse=True)
-  recommendation_ids = [post_id for sim, post_id in post_list]
-  first_answer = get_titles(recommendation_ids[:3], titles)
+  print(post_list[1:10])
+  recommendation_ids = [post_id for similarity, post_id in post_list]
+  first_answer = get_titles(recommendation_ids[:3])
   other_answer = recommendation_ids[4:21]
   return (first_answer,other_answer)
+
+print("giving recommendation")
+first, other = give_recommendations("Zelenyikot")
+ 
