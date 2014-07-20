@@ -203,23 +203,39 @@ def get_titles(ids, titles):
 def generate_link_by_id(post_id):
   return "http://habrahabr.ru/post/" + str(post_id)
 
+def get_top_N_similar(username, preferences, N):
+  user_preference = preferences[username]
+  similar = [(jaccard_index(user_preference, preference), other_user) for other_user, preference in preferences.iteritems() if other_user != username]
+  similar.sort(reverse=True)
+  return similar[:N]
+
+def occurs_in(post_id, preferences, users):
+  count = 0
+  for user in users:
+    preference = preferences[user]
+    if post_id in preference:
+      count += 1
+  return count
+
 #uncomment to make give_recommendations work!
-def give_recommendations(username, preferences, weights, titles):
-  preference = preferences[username] 
-  rank = {}
-  for user_other, preference_other in preferences.iteritems():
-    if username != user_other:
-      similarity = jaccard_index(preference, preference_other)
-      if not similarity:
-        continue
-      for post in preference_other:
-        if post not in preference:
-          rank.setdefault(post, 0)
-          rank[post] += similarity
-  #normalize and convert to 
-  post_list = [(sim/weights[post], post) for post, sim in rank.items()]
-  post_list.sort(reverse=True)
-  recommendation_ids = [post_id for sim, post_id in post_list]
-  first_answer = get_titles(recommendation_ids[:3], titles)
-  other_answer = recommendation_ids[4:21]
+def give_recommendations(username, preferences, titles):
+  N             = 15 # neigbourhood of the input-user
+  preference    = preferences[username] # set of favourite posts for input-user
+  top_similar   = get_top_N_similar(username, preferences, N) #top similar users + their similarity
+  similar_users = [user for similarity, user in top_similar]  #only similar usernames
+  rank          = {}
+  for similarity, other_user in top_similar:
+    other_preferences = preferences[other_user] 
+    for post_id in other_preferences:
+      if post_id not in preference:
+        rank.setdefault(post_id,0)
+        rank[post_id] += similarity
+  recommendations = [(similarity/occurs_in(post_id, preferences, similar_users), post_id) for post_id, similarity in rank.iteritems()]
+  recommendations.sort(reverse=True)
+  M = 20 # overall number of recommendations
+  WITH_TITLE = 3 # articles with titles
+  recommendation_topM = recommendations[:M]
+  recommendation_ids  = [post_id for similarity, post_id in recommendation_topM]
+  first_answer = get_titles(recommendation_ids[:WITH_TITLE], titles)
+  other_answer = recommendation_ids[WITH_TITLE:M]
   return (first_answer,other_answer)
