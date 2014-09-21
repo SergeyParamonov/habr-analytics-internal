@@ -19,8 +19,6 @@ from dateutil.parser import parse
 import pymongo
 MONGO_URL = os.environ.get('MONGOHQ_URL')
 
-if not MONGO_URL:
-  MONGO_URL = 'mongodb://sergey:KPXcLUM@lennon.mongohq.com:10079/app24642779'
 
 # Get a connection
 conn = pymongo.Connection(MONGO_URL)
