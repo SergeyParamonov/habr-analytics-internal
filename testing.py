@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import os
 import sys
 sys.path.append("src/")
-from network import get_topics_data, get_fav, get_views, get_scores, get_dates, get_top_users, update_topusers, extract_post_all_info, fetch_data_from_mongo, init_dates_dict, get_title, fetch_data_from_mongo, get_date_by_id, clean_old_monitor_records
+from network import *
 from user_visualize import visualize_y
 import urlparse
-from monitor_visualize import create_monitor_figure
-from utils import convert_date 
+from monitor_visualize import *
+from utils import debug
 from dateutil.parser import parse
-
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US.utf8')
 # dict_dates = {}
 # dict_last_values = {}
 # id_list = get_id_new_posts(dict_dates)
@@ -24,10 +24,38 @@ MONGO_URL = os.environ.get('MONGOHQ_URL')
 conn = pymongo.Connection(MONGO_URL)
 # Get the database
 db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
-topusers_database = db.topusers
+monitor_plotly_url = db.monitor_plotly_url
+monitor_plotly_url.remove({})
+#data = get_records_by_time(db.pulse_stats)
+#plotly_create_stream(data)
+#topusers_database = db.topusers
+#create_pulse_figure(pulse_stats.find({}))
+#plt.show()
+#cached_users = db.cached_users
+#update_topusers(cached_users)
+#data = get_topics_data("lozga")
+#for data_selector, descr in [(get_views,"views"), (get_fav,"favorite"), (get_scores,"score")]:
+#  y_values = data_selector(data)
+#  dates = get_dates(data)
+#  fig   = visualize_y(dates,y_values)
 
-monitor_database = db.monitor
-id_title_database = db.id_title
+#plt.show()
+
+#data = pulse_stats.find({})
+#def convert_to_date(d):
+#  return datetime(d[0],d[1],d[2],d[3],d[4])
+#pulse_stats.remove({})
+#for datum in data:
+#  pulse_stats.insert({'dif':datum['dif'], 'date1':convert_to_date(datum['date1']), 'date2':convert_to_date(datum['date2'])})
+
+#print(convert_date(u"1 июля в 11:17"))
+#monitor_database = db.monitor
+#id_title_database = db.id_title
+#cached_users = db.cached_users
+
+
+#monitor_database = db.monitor
+#id_title_database = db.id_title
 
 
 #for post_id in ids:

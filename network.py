@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from base64 import b64encode 
+import matplotlib.pyplot as plt
 import urllib3
 from bs4 import BeautifulSoup
 import locale
@@ -8,12 +10,16 @@ from flask import flash
 import json
 import sys
 sys.path.append("src/")
-from utils import convert_date
 # dependencies of monitor_call
-from utils import make_fig_key, clean_old, update_posts
-from monitor_visualize import create_monitor_figure 
+from utils import *
+from monitor_visualize import create_monitor_figure
+from user_visualize import visualize_y
 from dateutil.parser import parse
+from StringIO import StringIO
+from bson import Binary
+from base64 import b64encode 
 import pytz
+
 
 
 def extract_data(html):
@@ -33,7 +39,7 @@ def extract_data(html):
   try:
     views = int(html.find(class_="pageviews").text)
   except:
-    print(html)
+#   print(html)
     print("ERROR PAGEVIEWS")
     views = None
   #просмотры
@@ -47,16 +53,20 @@ def extract_data(html):
     favorite = None
     print(html)
     print("ERROR FAV")
-  date = html.find(class_="published").text
+  rowDate = html.find(class_="published").text
+# debug(rowDate)
+  date = convert_date(rowDate)
+  debug(date)
   return {"post_id":post_id, "score":score, "views":views, "favorite":favorite, "date":date}
 
 def get_topics_data(username):
+  MAX_PAGES = 250
   http = urllib3.PoolManager()
   url  = "http://habrahabr.ru/users/"+username+"/topics/page"
   divclass = "post"
   data     = []
   i  = 1
-  while True:
+  while i <= MAX_PAGES:
     try:
       # url + str(i) iterates over pages of topics created by the user
       page_url = url+str(i)
@@ -97,7 +107,7 @@ def get_top_users():
   url = 'http://habrahabr.ru/users/'
   http = urllib3.PoolManager()
   user_class = "username"
-  tm_users = ['boomburum', 'alizar', 'ilya42', 'deniskin']
+  tm_users = ['boomburum', 'alizar', 'ilya42', 'deniskin', 'marks', 'mithgol']
   try:
     response = http.request('GET', url, headers={"cache-control": "no-cache"})
   except: 
@@ -109,23 +119,22 @@ def get_top_users():
   users = [user.text.lower() for user in usersRow]  
   return users + tm_users
 
-def read_user_datafile(username):
-  datafile    = open("data/topusers/"+username, "r")
-  row_str_data = datafile.read()
-  try:
-    data = eval(row_str_data)
-  except:
-    data = None
-  return data
-
 def update_topusers(topusers_database):
   users = get_top_users()
   topusers_database.remove({})
+  timestamp = datetime.now()
   for user in users:
     data = get_topics_data(user)
-    for datum in data:
-      datum['user'] = user
-      topusers_database.insert(datum)
+    for data_selector, descr in [(get_views,"views"), (get_fav,"favorite"), (get_scores,"score")]:
+      y_values = data_selector(data)
+      dates = get_dates(data)
+      fig   = visualize_y(dates,y_values)
+      img   = StringIO()
+      fig.savefig(img)
+      img.seek(0)
+      plt.close(fig)
+      str_img = b64encode(img.read())
+      topusers_database.insert({"user": user, "datatype": descr, "figure_binary":str_img, "timestamp":timestamp, "type":"monitor"})
 
 def update_date_dictionary(dates_dict):
   url = "http://habrahabr.ru/posts/collective/new/page"
@@ -226,11 +235,6 @@ def extract_post_all_info(post_id):
 
   return (int(post_id), title ,views, favorite, twitter_data, facebook_data, vkontakte_data)
 
-def fetch_data_from_mongo(name,topusers_database):
-  data = topusers_database.find({"user":name}).sort("post_id",1)
-  if data:
-    return data
-  return None
 
 def get_title(post_id):
   post_id   =  str(post_id)
@@ -254,9 +258,10 @@ def create_dict_id_title(dict_id_title,id_title_database):
 
 #REQUIRES LIBRARIES datetime (datetime constructor), pytz, 
 #DEPENDS ON SRC/ *monitor_visualize.py*: create_monitor_figure, *utils.py*: make_fig_key, clean_old, update_posts, *network.py* update_date_dictionary, create_dict_id_title, extract_post_all_info
-#MODIFIES dict_dates, dict_last_values, dict_id_title, monitorform, id_title_database, PoolManager (close connections), cache, monitor_database
-def monitor_call(monitorform, dict_dates, dict_last_values, dict_id_title, monitor_database, id_title_database, cache, monitor_datatypes):
-  # remove the posts older than 2 days
+#MODIFIES dict_dates, dict_last_values, dict_id_title,  id_title_database, PoolManager (close connections), cache, monitor_database, pulse_database
+def monitor_call(dict_dates, dict_id_title, monitor_database, id_title_database, cache,monitor_datatypes, pulse_database, pulse_stats, pulse_figure_db, monitor_plotly_url):
+  debug("monitor call start")
+  # remove the posts older than 5 days
   clean_old(dict_dates, monitor_database, id_title_database, monitor_datatypes, cache)
   # remove all old records from monitor database, this might happen due to errors or restarts of the server
   clean_old_monitor_records(monitor_database, id_title_database)
@@ -266,28 +271,35 @@ def monitor_call(monitorform, dict_dates, dict_last_values, dict_id_title, monit
   # mark all posts with the current timestamp
   update_date_dictionary(dict_dates)
   # drop all last values
-  dict_last_values.clear()
+  dict_last_values = {}
   # iterate over all "fresh" posts and get the data
+  old = list(pulse_database.find({}).sort("_id",1))
+  pulse_database.remove({})
+  new = []
+  debug("gathering info")
   for post_id,date in dict_dates.iteritems():
     datum = extract_post_all_info(post_id)
     if datum:
       dict_last_values[post_id] = datum 
+      new.append({"_id":post_id, "views": datum[2], "timestamp": datetime(timestamp[0],timestamp[1],timestamp[2],timestamp[3],timestamp[4])})
       # keep track of the titles in the id_title_database to display it for user in the form monitorform
       id_title_database.insert({"_id":post_id, "title": datum[1], "date": date})
+  pulse_database.insert(new)
+  clean_update_and_create_figure(new,old,pulse_stats, pulse_figure_db)
   # actually update the monitor database with new data
   update_posts(dict_last_values,timestamp,monitor_database)
   # update available titles and their id-s in the app *dict_id_title* by getting data from *id_title_database*
   create_dict_id_title(dict_id_title,id_title_database)
-  # update possible selection of titles (posts) in the monitor form
-  monitorform.set_choices(dict_id_title.items())
   # close all connection to actually get "fresh" data from habrahabr
   pool_manager = urllib3.PoolManager()
   pool_manager.clear()
   # cache all the images with new data
+  debug("generating plots")
   for post_id in dict_dates.keys():
     for datatype in monitor_datatypes.keys():
-      img = create_monitor_figure(post_id, datatype, monitor_database)
-      cache.set(make_fig_key(post_id,datatype),img)
+      title = dict_id_title[int(post_id)]
+      figure_url = create_monitor_figure(post_id, datatype, monitor_database, title)
+      monitor_plotly_url.update({"_id":make_fig_key(post_id,datatype)}, {"_id":make_fig_key(post_id,datatype),"post_id":post_id, "datatype":datatype, "url":figure_url, "title":title},upsert=True)
 
 def get_date_by_id(post_id):
   url = "http://habrahabr.ru/post/" + str(post_id)

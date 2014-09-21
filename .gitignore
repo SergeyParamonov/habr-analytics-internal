@@ -1,0 +1,6 @@
+venv
+*.mongo
+*.pyc
+*.swp
+localdev_commands
+tags
