@@ -16,16 +16,17 @@ locale.setlocale(locale.LC_ALL, 'en_US.utf8')
 # for id_post in id_list:
 #   dict_last_values[id_post] = extract_post_all_info(id_post)
 
-import pymongo
-MONGO_URL = os.environ.get('MONGOHQ_URL')
+#import pymongo
+#MONGO_URL = os.environ.get('MONGOHQ_URL')
+print(update_date_dictionary({}))
 
 
 # Get a connection
-conn = pymongo.Connection(MONGO_URL)
+#conn = pymongo.Connection(MONGO_URL)
 # Get the database
-db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
-monitor_plotly_url = db.monitor_plotly_url
-monitor_plotly_url.remove({})
+#db = conn[urlparse.urlparse(MONGO_URL).path[1:]]
+#monitor_plotly_url = db.monitor_plotly_url
+#monitor_plotly_url.remove({})
 #data = get_records_by_time(db.pulse_stats)
 #plotly_create_stream(data)
 #topusers_database = db.topusers

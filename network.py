@@ -137,7 +137,7 @@ def update_topusers(topusers_database):
       topusers_database.insert({"user": user, "datatype": descr, "figure_binary":str_img, "timestamp":timestamp, "type":"monitor"})
 
 def update_date_dictionary(dates_dict):
-  url = "http://habrahabr.ru/posts/collective/new/page"
+  url = "http://habrahabr.ru/top/page"
   http = urllib3.PoolManager()
   divclass = "post"
   data     = []
